@@ -1,32 +1,40 @@
 # ZeroVault AI Context
 
-**Purpose:** This document provides essential project context for AI assistants joining the project in a new conversation.
+> This document provides context for AI assistants working on ZeroVault.
+>
+> Read this file before making architectural or implementation changes.
 
 ---
 
-## Project Information
+# Project
 
-**Project Name:** ZeroVault
+Name
 
-**Current Version:** 0.0.1
+ZeroVault
 
-**Project Type:** Offline Desktop Encryption Application
+Description
 
----
-
-## Mission
-
-ZeroVault allows users to securely encrypt and decrypt files and folders entirely offline using modern, industry-standard cryptography.
-
-No user data is uploaded.
-
-No passwords are stored.
-
-Privacy is the highest priority.
+ZeroVault is a cross-platform desktop application built with Tauri v2, React, TypeScript, and Rust for secure AES-256 file encryption and decryption.
 
 ---
 
-## Technology Stack
+# Current Progress
+
+Version
+
+v0.2.0
+
+Progress
+
+Approximately 35%
+
+Current Sprint
+
+Sprint 5
+
+---
+
+# Tech Stack
 
 Frontend
 
@@ -36,100 +44,222 @@ Frontend
 
 Desktop
 
-- Tauri
+- Tauri v2
 
 Backend
 
 - Rust
 
-Version Control
+Icons
 
-- Git
-- GitHub
+- Lucide React
 
-Operating System
+State
 
-- Xubuntu Linux
-
----
-
-## Development Philosophy
-
-- Security before convenience.
-- Never invent cryptography.
-- Prefer audited libraries.
-- Every dependency must be justified.
-- Keep architecture modular.
-- Documentation is part of development.
-- AI-generated code must be reviewed before merging.
+- React Context API
 
 ---
 
-## Coding Style
+# Architecture
 
-### TypeScript
+Feature-first architecture.
 
-- camelCase variables
-- PascalCase React components
-- Functional components only
-- Strong typing whenever practical
+Example
 
-### Rust
+src/
 
-- snake_case functions
-- Modules organized by responsibility
-- Avoid unnecessary cloning
-- Prefer Result over panic
+features/
+dropzone/
+file-list/
+password/
+encryption/
 
----
+Business logic belongs inside features.
 
-## Git Workflow
-
-Branch
-
-main
-
-Commit Style
-
-feat:
-fix:
-docs:
-refactor:
-test:
-chore:
-
-Every commit must leave the project in a working state.
+Pages should remain thin.
 
 ---
 
-## Current Sprint
+# Styling
 
-Sprint 2
+Global CSS
 
-Architecture & Documentation
+CSS Variables
 
----
+Component CSS
 
-## Immediate Goals
+No inline styles.
 
-- Complete documentation
-- Design architecture
-- Design encryption pipeline
-- Design UI
-- Build encryption engine
+No CSS-in-JS.
 
 ---
 
-## Important Rules
+# Import Rules
 
-Passwords are never stored.
+Always use
 
-Files never leave the user's computer.
+```
+@/
+```
 
-Encryption keys only exist in RAM while required.
+Never use long relative imports.
 
-ZeroVault must remain offline-first.
+Correct
+
+```
+@/context/FileContext
+```
+
+Incorrect
+
+```
+../../../context/FileContext
+```
 
 ---
 
-End of AI Context.
+# Current Features
+
+Completed
+
+- Native file picker
+- Multi-file selection
+- Duplicate prevention
+- Remove file
+- Clear all files
+- Desktop UI
+
+Not Started
+
+- Drag & Drop
+- Password validation
+- Encryption
+- Decryption
+
+---
+
+# File Management Rules
+
+Multiple selections append.
+
+Duplicate files are ignored.
+
+Removing files updates state immediately.
+
+Clear All removes every selected file.
+
+---
+
+# State Management
+
+Current
+
+React Context API
+
+Context
+
+FileContext
+
+Avoid introducing Redux or Zustand unless approved.
+
+---
+
+# Rust Responsibilities
+
+Rust owns
+
+- Encryption
+- Decryption
+- File IO
+- Secure delete
+
+React owns
+
+- UI
+- State
+- User interaction
+
+---
+
+# Code Style
+
+Functional React Components only.
+
+Strict TypeScript.
+
+No unused code.
+
+Prefer composition.
+
+Prefer reusable components.
+
+---
+
+# Naming
+
+Components
+
+PascalCase
+
+Hooks
+
+useSomething
+
+Contexts
+
+SomethingContext
+
+CSS
+
+kebab-case
+
+---
+
+# Important Decisions
+
+- Native dialogs use @tauri-apps/plugin-dialog.
+- File picker supports multiple selections.
+- New selections append to the existing list.
+- Duplicate files are prevented.
+- React Context API is the global state solution.
+- Encryption will be implemented entirely in Rust.
+- React never performs cryptographic operations.
+
+---
+
+# Documentation Policy
+
+Every completed sprint updates:
+
+- README.md
+- CHANGELOG.md
+- PROJECT_STATUS.md
+- PROJECT_BIBLE.md
+- AI_CONTEXT.md
+
+---
+
+# AI Guidelines
+
+Before implementing a feature:
+
+1. Check PROJECT_BIBLE.md.
+2. Preserve the existing architecture.
+3. Do not move files unless necessary.
+4. Do not introduce new libraries without approval.
+5. Follow the existing folder structure.
+6. Keep components focused and reusable.
+7. Favor maintainability over clever solutions.
+
+---
+
+# Current Goal
+
+Implement drag & drop support while preserving the existing file management workflow.
+
+After that:
+
+- Password validation
+- Rust commands
+- AES-256 encryption
+- AES-256 decryption

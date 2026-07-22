@@ -1,145 +1,369 @@
 # ZeroVault Architecture
 
-**Version:** 0.0.1
+> This document describes the technical architecture of ZeroVault.
 
 ---
 
 # Overview
 
-ZeroVault is an offline-first desktop application built using a layered architecture.
+ZeroVault follows a layered architecture with a clear separation between the user interface and the encryption engine.
 
-The application separates the user interface from the core encryption logic.
-
-This separation improves maintainability, testing, security, and future scalability.
-
----
-
-# Technology Stack
-
-Frontend
-
-- React
-- TypeScript
-- Vite
-
-Desktop Layer
-
-- Tauri
-
-Backend
-
-- Rust
-
-Version Control
-
-- Git
-- GitHub
-
----
-
-# High-Level Architecture
-
-+-----------------------------+
-|        React UI             |
-+-----------------------------+
-              |
-              |
-      Tauri Commands
-              |
-              |
-+-----------------------------+
-|       Rust Backend          |
-+-----------------------------+
-      |        |         |
-      |        |         |
-   Crypto   Filesystem  Security
-      |        |         |
-      +--------+---------+
-               |
-      Local Storage Only
+```
++------------------------------------------------------+
+|                  React + TypeScript                  |
+|------------------------------------------------------|
+| Pages                                                |
+| Layouts                                              |
+| Features                                             |
+| Context                                              |
+| Components                                           |
++------------------------------------------------------+
+                     │
+                     │ Tauri Commands
+                     ▼
++------------------------------------------------------+
+|                    Rust Backend                      |
+|------------------------------------------------------|
+| Encryption Engine                                    |
+| File System                                          |
+| Secure Delete                                        |
+| Progress Reporting                                   |
++------------------------------------------------------+
+                     │
+                     ▼
+              Operating System APIs
+```
 
 ---
 
-# Responsibilities
+# Frontend Architecture
 
-## React
+```
+src/
 
-Responsible for:
+components/
+│
+├── layout/
+└── ui/
 
-- User Interface
-- Forms
-- Progress indicators
-- Drag & Drop
-- User interaction
+context/
 
-React never performs encryption directly.
+features/
 
----
+pages/
 
-## Tauri
+styles/
 
-Responsible for:
-
-- Communication between React and Rust
-- Native desktop functionality
+utils/
+```
 
 ---
 
-## Rust
+# Feature Structure
 
-Responsible for:
+Every feature is self-contained.
+
+Example
+
+```
+features/
+
+dropzone/
+
+components/
+
+hooks/
+
+types.ts
+
+index.ts
+```
+
+Each feature owns:
+
+- Components
+- Hooks
+- Types
+- Helpers
+
+---
+
+# Data Flow
+
+```
+User
+
+↓
+
+React UI
+
+↓
+
+Context
+
+↓
+
+Feature Logic
+
+↓
+
+Tauri Command
+
+↓
+
+Rust
+
+↓
+
+Filesystem
+```
+
+The UI never accesses the filesystem directly.
+
+---
+
+# State Management
+
+Current
+
+React Context API
+
+```
+FileContext
+
+↓
+
+useFiles()
+
+↓
+
+Components
+```
+
+Future Contexts
+
+- SettingsContext
+- ThemeContext
+
+---
+
+# Current Application Flow
+
+```
+User
+
+↓
+
+Click Browse
+
+↓
+
+Native Dialog
+
+↓
+
+Selected Files
+
+↓
+
+React Context
+
+↓
+
+File List UI
+```
+
+Future
+
+```
+Password
+
+↓
+
+Encrypt
+
+↓
+
+Rust Command
+
+↓
+
+AES-256
+
+↓
+
+Encrypted Files
+```
+
+---
+
+# Backend Responsibilities
+
+Rust is responsible for
 
 - Encryption
 - Decryption
-- Password processing
-- Secure random generation
-- File system operations
+- File IO
+- Secure Delete
+- Progress Updates
+- Error Handling
 
 ---
 
-# Planned Folder Structure
+# Frontend Responsibilities
 
-src/
+React is responsible for
 
-- app/
-- components/
-- pages/
-- hooks/
-- services/
-- types/
-- utils/
-
-src-tauri/src/
-
-- commands/
-- crypto/
-- filesystem/
-- security/
-- models/
-- utils/
+- UI
+- State
+- Validation
+- User Interaction
 
 ---
 
-# Security Model
+# Communication
 
-The frontend never directly manipulates encryption keys.
+React communicates with Rust only through Tauri Commands.
 
-Sensitive operations remain inside the Rust backend.
+Example
 
-Passwords are processed only when required and are never stored.
+```
+invoke("encrypt_files")
+```
 
----
-
-# Future Expansion
-
-Future versions may include:
-
-- Secure password manager
-- File integrity verification
-- Secure file sharing
-- Hardware security key support
-- Plugin architecture
+No direct filesystem access from React.
 
 ---
 
-End of Architecture Document.
+# Folder Ownership
+
+components/
+
+Reusable UI
+
+features/
+
+Business logic
+
+pages/
+
+Page composition only
+
+context/
+
+Global state
+
+styles/
+
+Global styling
+
+utils/
+
+Shared utilities
+
+---
+
+# Current Feature Map
+
+```
+Drop Zone
+
+↓
+
+File Picker
+
+↓
+
+File Context
+
+↓
+
+File List
+
+↓
+
+Password
+
+↓
+
+Encryption Buttons
+```
+
+---
+
+# Planned Architecture
+
+```
+Drop Zone
+
+↓
+
+Validation
+
+↓
+
+Password
+
+↓
+
+Encrypt Command
+
+↓
+
+Rust
+
+↓
+
+AES-256
+
+↓
+
+Progress Events
+
+↓
+
+Status Bar
+```
+
+---
+
+# Design Principles
+
+- Feature-first architecture
+- Single responsibility
+- Separation of concerns
+- Thin pages
+- Reusable UI
+- Context for shared state
+- Rust owns business logic
+- React owns presentation
+
+---
+
+# Future Modules
+
+Encryption Engine
+
+Password Manager
+
+Settings
+
+Recent Files
+
+Update Checker
+
+Secure Delete
+
+Folder Encryption
+
+Logging
+
+---
+
+Last Updated
+
+Sprint 4
+
+Version
+
+v0.2.0
