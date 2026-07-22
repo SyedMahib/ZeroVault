@@ -179,6 +179,25 @@
   font-size: 0.95rem;
 }
 
+
+
+
+.drag-active {
+  border-color: var(--primary);
+  background: rgba(59, 130, 246, 0.08);
+  transition: all 0.2s ease;
+}
+
+.drag-active .dropzone-button {
+  transform: scale(1.01);
+}
+
+.dropzone-card,
+.dropzone-button {
+  /* background: transparent; */
+  transition: all 0.2s ease;
+}
+
 /* ==========================================================
    File List
 ========================================================== */

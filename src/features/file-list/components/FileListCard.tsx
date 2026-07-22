@@ -11,6 +11,7 @@ export default function FileListCard() {
 
         {files.length > 0 && (
           <button
+            type="button"
             className="clear-files-btn"
             onClick={clearFiles}
           >
@@ -49,6 +50,7 @@ export default function FileListCard() {
               </div>
 
               <button
+                type="button"
                 className="remove-file-btn"
                 onClick={() => removeFile(file.path)}
                 aria-label={`Remove ${file.name}`}

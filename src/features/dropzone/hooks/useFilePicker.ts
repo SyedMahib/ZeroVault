@@ -1,13 +1,23 @@
 import { useState } from "react";
 import { open } from "@tauri-apps/plugin-dialog";
-
-export interface SelectedFile {
-  name: string;
-  path: string;
-}
+import type { SelectedFile } from "@/features/file-list";
 
 export function useFilePicker() {
   const [files, setFiles] = useState<SelectedFile[]>([]);
+
+  const addFiles = (selected: SelectedFile[]) => {
+    setFiles((current) => {
+      const merged = [...current];
+
+      for (const file of selected) {
+        if (!merged.some((f) => f.path === file.path)) {
+          merged.push(file);
+        }
+      }
+
+      return merged;
+    });
+  };
 
   const openFilePicker = async () => {
     try {
@@ -20,23 +30,12 @@ export function useFilePicker() {
 
       const paths = Array.isArray(result) ? result : [result];
 
-      const selected = paths.map((path) => ({
+      const selected: SelectedFile[] = paths.map((path) => ({
         path,
         name: path.split("/").pop() ?? path,
       }));
 
-      // Merge with existing files and prevent duplicates
-      setFiles((current) => {
-        const merged = [...current];
-
-        for (const file of selected) {
-          if (!merged.some((f) => f.path === file.path)) {
-            merged.push(file);
-          }
-        }
-
-        return merged;
-      });
+      addFiles(selected);
     } catch (error) {
       console.error("Failed to open file picker:", error);
     }
@@ -52,6 +51,7 @@ export function useFilePicker() {
 
   return {
     files,
+    addFiles,
     openFilePicker,
     removeFile,
     clearFiles,
