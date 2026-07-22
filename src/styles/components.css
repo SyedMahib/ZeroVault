@@ -1,0 +1,474 @@
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+  background: var(--background);
+  color: var(--text-primary);
+}
+
+.app-main {
+  flex: 1;
+
+  width: 100%;
+  max-width: 1280px;
+
+  margin: 0 auto;
+
+  padding: 2rem;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  height: 64px;
+
+  padding: 0 1.5rem;
+
+  background: var(--surface);
+
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brand-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 40px;
+  height: 40px;
+
+  border-radius: var(--radius-md);
+
+  background: var(--primary);
+
+  color: white;
+}
+
+.brand-text h1 {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.brand-text p {
+  margin: 0;
+  font-size: 0.75rem;
+
+  color: var(--text-secondary);
+}
+
+.toolbar {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.icon-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 38px;
+  height: 38px;
+
+  border: none;
+
+  border-radius: var(--radius-sm);
+
+  background: transparent;
+
+  color: var(--text-primary);
+
+  cursor: pointer;
+
+  transition: var(--transition);
+}
+
+.icon-button:hover {
+  background: var(--surface-light);
+}
+
+/* ==========================================================
+   Status Bar
+========================================================== */
+
+.status-bar {
+  display: flex;
+  align-items: center;
+
+  height: 34px;
+
+  padding: 0 1rem;
+
+  background: var(--surface);
+
+  border-top: 1px solid var(--border);
+
+  color: var(--text-secondary);
+
+  font-size: 0.875rem;
+}
+
+.status-text {
+  user-select: none;
+}
+
+/* ==========================================================
+   Drop Zone
+========================================================== */
+
+.dropzone-card {
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.dropzone-button {
+  width: 100%;
+
+  min-height: 260px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  gap: 1rem;
+
+  padding: 2rem;
+
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-lg);
+
+  background: var(--surface);
+
+  color: var(--text-primary);
+
+  cursor: pointer;
+
+  transition: var(--transition);
+}
+
+.dropzone-button:hover {
+  border-color: var(--primary);
+  background: var(--surface-light);
+}
+
+.dropzone-icon {
+  color: var(--primary);
+}
+
+.dropzone-title {
+  margin: 0;
+
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.dropzone-subtitle {
+  margin: 0;
+
+  color: var(--text-secondary);
+
+  font-size: 0.95rem;
+}
+
+/* ==========================================================
+   File List
+========================================================== */
+
+.file-list-card {
+  width: 100%;
+
+  margin-bottom: 2rem;
+
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+
+  border-radius: var(--radius-lg);
+
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 1rem 1.5rem;
+
+  border-bottom: 1px solid var(--border);
+}
+
+.card-header h2 {
+  margin: 0;
+
+  font-size: 1rem;
+
+  font-weight: 600;
+}
+
+.clear-files-btn {
+  border: none;
+  background: transparent;
+
+  color: var(--primary);
+
+  font-size: .9rem;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: .2s;
+}
+
+.clear-files-btn:hover {
+  opacity: .8;
+}
+
+.file-list-empty {
+  min-height: 180px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  align-items: center;
+
+  gap: .75rem;
+
+  color: var(--text-secondary);
+}
+
+.file-list-empty p {
+  margin: 0;
+
+  font-weight: 600;
+}
+
+.file-list-empty span {
+  font-size: .9rem;
+}
+
+
+
+
+.file-list-items {
+  padding: 1rem;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+
+  padding: .75rem 1rem;
+
+  border-bottom: 1px solid var(--border);
+}
+
+.file-item:last-child {
+  border-bottom: none;
+}
+
+/* ==========================================================
+   File Items
+========================================================== */
+
+.file-list-items {
+  display: flex;
+  flex-direction: column;
+}
+
+.file-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 1rem 1.25rem;
+
+  border-bottom: 1px solid var(--border);
+}
+
+.file-item:last-child {
+  border-bottom: none;
+}
+
+.file-item-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  min-width: 0;
+}
+
+.file-info {
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+}
+
+.file-name {
+  font-weight: 600;
+}
+
+.file-path {
+  font-size: .8rem;
+
+  color: var(--text-secondary);
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  max-width: 700px;
+}
+
+.remove-file-btn {
+  width: 32px;
+  height: 32px;
+
+  border: none;
+
+  border-radius: 50%;
+
+  cursor: pointer;
+
+  background: transparent;
+
+  color: var(--text-secondary);
+
+  transition: .2s;
+}
+
+.remove-file-btn:hover {
+  background: rgba(239,68,68,.15);
+
+  color: #ef4444;
+}
+
+/* ==========================================================
+   Password
+========================================================== */
+
+.password-card {
+  width: 100%;
+
+  margin-bottom: 2rem;
+
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+
+  border-radius: var(--radius-lg);
+
+  overflow: hidden;
+}
+
+.password-body {
+  padding: 1.5rem;
+}
+
+.password-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+
+  padding: .9rem 1rem;
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+
+  background: var(--background);
+}
+
+.password-input {
+  flex: 1;
+
+  border: none;
+  outline: none;
+
+  background: transparent;
+
+  color: var(--text-primary);
+
+  font-size: 1rem;
+}
+
+.password-input::placeholder {
+  color: var(--text-muted);
+}
+
+.password-hint {
+  margin-top: .75rem;
+
+  color: var(--text-secondary);
+
+  font-size: .9rem;
+}
+
+/* ==========================================================
+   Action Buttons
+========================================================== */
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+
+  margin-bottom: 2rem;
+}
+
+.encrypt-btn,
+.decrypt-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .6rem;
+
+  min-width: 180px;
+
+  padding: .9rem 1.5rem;
+
+  border: none;
+
+  border-radius: var(--radius-md);
+
+  font-size: .95rem;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: var(--transition);
+}
+
+.encrypt-btn {
+  background: var(--primary);
+  color: white;
+}
+
+.encrypt-btn:hover {
+  background: var(--primary-hover);
+}
+
+.decrypt-btn {
+  background: var(--surface);
+  color: var(--text-primary);
+
+  border: 1px solid var(--border);
+}
+
+.decrypt-btn:hover {
+  background: var(--surface-light);
+}
+

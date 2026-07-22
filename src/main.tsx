@@ -1,10 +1,15 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
-import "./styles/global.css";
 
-ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <React.StrictMode>
+import App from "./App";
+
+import "./styles/global.css";
+import "./styles/theme.css";
+import "./styles/components.css";
+
+import { FileProvider } from "./context/FileContext";
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <FileProvider>
     <App />
-  </React.StrictMode>,
+  </FileProvider>
 );

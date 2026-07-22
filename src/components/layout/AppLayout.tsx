@@ -1,20 +1,22 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
+
 import Header from "./Header";
+import StatusBar from "./StatusBar";
 
 interface AppLayoutProps {
   children: ReactNode;
 }
 
-export default function AppLayout({
-  children,
-}: AppLayoutProps) {
+export default function AppLayout({ children }: AppLayoutProps) {
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--text-primary)]">
+    <div className="app-layout">
       <Header />
 
-      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-6 py-8">
+      <main className="app-main">
         {children}
       </main>
+
+      <StatusBar />
     </div>
   );
 }

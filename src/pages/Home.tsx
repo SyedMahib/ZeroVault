@@ -1,13 +1,15 @@
+import { DropZoneCard } from "@/features/dropzone";
+import { EncryptionActions } from "@/features/encryption";
+import { FileListCard } from "@/features/file-list";
+import { PasswordCard } from "@/features/password";
+
 export default function Home() {
   return (
-    <section className="space-y-6">
-      <h1 className="text-4xl font-bold">
-        ZeroVault
-      </h1>
-
-      <p className="text-slate-400">
-        Secure local file encryption powered by Rust and modern cryptography.
-      </p>
+    <section>
+      <DropZoneCard />
+      <FileListCard />
+      <PasswordCard />
+      <EncryptionActions />
     </section>
   );
 }
