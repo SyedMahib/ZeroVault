@@ -1,37 +1,48 @@
 # ZeroVault Architecture
 
-> This document describes the technical architecture of ZeroVault.
+> This document defines the technical architecture of ZeroVault.
+>
+> It describes how the application is organized, how data flows through the system, and the responsibilities of each layer.
 
 ---
 
-# Overview
+# Architecture Overview
 
-ZeroVault follows a layered architecture with a clear separation between the user interface and the encryption engine.
+ZeroVault follows a layered architecture with a strict separation between the presentation layer and the backend encryption engine.
 
 ```
-+------------------------------------------------------+
-|                  React + TypeScript                  |
-|------------------------------------------------------|
-| Pages                                                |
-| Layouts                                              |
-| Features                                             |
-| Context                                              |
-| Components                                           |
-+------------------------------------------------------+
-                     │
-                     │ Tauri Commands
-                     ▼
-+------------------------------------------------------+
-|                    Rust Backend                      |
-|------------------------------------------------------|
-| Encryption Engine                                    |
-| File System                                          |
-| Secure Delete                                        |
-| Progress Reporting                                   |
-+------------------------------------------------------+
-                     │
-                     ▼
-              Operating System APIs
+┌─────────────────────────────────────────────────────────────┐
+│                    React + TypeScript                       │
+│─────────────────────────────────────────────────────────────│
+│ App                                                        │
+│ Layout                                                     │
+│ Shared Components                                           │
+│ Feature Modules                                             │
+│ Context API                                                 │
+└─────────────────────────────────────────────────────────────┘
+                           │
+                           │ invoke()
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│                       Tauri Bridge                          │
+│─────────────────────────────────────────────────────────────│
+│ Commands                                                    │
+│ Events                                                      │
+└─────────────────────────────────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│                        Rust Backend                         │
+│─────────────────────────────────────────────────────────────│
+│ Encryption Engine                                           │
+│ File System                                                 │
+│ Secure Delete                                               │
+│ Progress Reporting                                          │
+│ Error Handling                                              │
+└─────────────────────────────────────────────────────────────┘
+                           │
+                           ▼
+                    Operating System APIs
 ```
 
 ---
@@ -40,226 +51,284 @@ ZeroVault follows a layered architecture with a clear separation between the use
 
 ```
 src/
-
-components/
 │
-├── layout/
-└── ui/
-
-context/
-
-features/
-
-pages/
-
-styles/
-
-utils/
+├── app/
+│
+├── assets/
+│
+├── components/
+│   ├── layout/
+│   └── ui/
+│
+├── context/
+│   └── FileContext.tsx
+│
+├── features/
+│   ├── dropzone/
+│   ├── file-list/
+│   ├── password/
+│   └── status-bar/
+│
+├── hooks/
+│
+├── styles/
+│
+├── types/
+│
+└── utils/
 ```
 
 ---
 
-# Feature Structure
+# Feature Architecture
 
-Every feature is self-contained.
+ZeroVault follows a **Feature-First Architecture**.
+
+Every feature owns its own implementation.
 
 Example
 
 ```
 features/
-
-dropzone/
-
-components/
-
-hooks/
-
-types.ts
-
-index.ts
+│
+├── dropzone/
+│   ├── components/
+│   ├── hooks/
+│   ├── types.ts
+│   └── index.ts
 ```
 
-Each feature owns:
+Each feature may contain:
 
 - Components
 - Hooks
 - Types
 - Helpers
+- Feature exports
+
+Business logic belongs inside hooks.
+
+UI components remain presentational.
 
 ---
 
-# Data Flow
+# Current Data Flow
+
+## File Picker
 
 ```
 User
-
-↓
-
-React UI
-
-↓
-
-Context
-
-↓
-
-Feature Logic
-
-↓
-
-Tauri Command
-
-↓
-
-Rust
-
-↓
-
-Filesystem
+    │
+    ▼
+Browse Button
+    │
+    ▼
+Tauri Dialog Plugin
+    │
+    ▼
+useFilePicker()
+    │
+    ▼
+addFiles()
+    │
+    ▼
+FileContext
+    │
+    ▼
+FileListCard
 ```
 
-The UI never accesses the filesystem directly.
+---
+
+## Drag & Drop
+
+```
+User
+    │
+    ▼
+Native Tauri Drag Event
+    │
+    ▼
+useDragDrop()
+    │
+    ▼
+addFiles()
+    │
+    ▼
+FileContext
+    │
+    ▼
+FileListCard
+```
+
+---
+
+# Future Encryption Flow
+
+```
+User
+    │
+    ▼
+Select Files
+    │
+    ▼
+Password Validation
+    │
+    ▼
+Encrypt Button
+    │
+    ▼
+invoke("encrypt_files")
+    │
+    ▼
+Rust Backend
+    │
+    ▼
+AES-256 Encryption
+    │
+    ▼
+Encrypted Files
+    │
+    ▼
+Status Update
+```
 
 ---
 
 # State Management
 
-Current
+Current global state is managed using **React Context API**.
 
-React Context API
+Current Context
 
 ```
 FileContext
-
-↓
-
-useFiles()
-
-↓
-
-Components
 ```
+
+Current Responsibilities
+
+- Selected Files
+- Open Native File Picker
+- Add Files
+- Remove File
+- Clear All Files
 
 Future Contexts
 
 - SettingsContext
-- ThemeContext
+- ThemeContext (optional)
 
----
-
-# Current Application Flow
-
-```
-User
-
-↓
-
-Click Browse
-
-↓
-
-Native Dialog
-
-↓
-
-Selected Files
-
-↓
-
-React Context
-
-↓
-
-File List UI
-```
-
-Future
-
-```
-Password
-
-↓
-
-Encrypt
-
-↓
-
-Rust Command
-
-↓
-
-AES-256
-
-↓
-
-Encrypted Files
-```
+Redux or Zustand will not be introduced unless the application grows significantly.
 
 ---
 
 # Backend Responsibilities
 
-Rust is responsible for
+Rust is responsible for:
 
-- Encryption
-- Decryption
+- AES-256 Encryption
+- AES-256 Decryption
 - File IO
 - Secure Delete
-- Progress Updates
+- Progress Reporting
 - Error Handling
+- Performance-Critical Operations
 
 ---
 
 # Frontend Responsibilities
 
-React is responsible for
+React is responsible for:
 
-- UI
-- State
-- Validation
+- User Interface
 - User Interaction
+- Global State
+- Validation
+- Progress Display
+- Invoking Rust Commands
+
+The frontend must never perform cryptographic operations.
 
 ---
 
-# Communication
+# Communication Layer
 
-React communicates with Rust only through Tauri Commands.
+The frontend communicates with Rust only through **Tauri Commands**.
+
+Example
+
+```ts
+await invoke("encrypt_files", {
+  paths,
+  password,
+});
+```
+
+Future progress updates will use **Tauri Events**.
 
 Example
 
 ```
-invoke("encrypt_files")
+Rust
+    │
+emit()
+    │
+    ▼
+React Listener
+    │
+    ▼
+Progress Bar
 ```
-
-No direct filesystem access from React.
 
 ---
 
-# Folder Ownership
+# Folder Responsibilities
 
-components/
+## app/
 
-Reusable UI
+Application bootstrap.
 
-features/
+---
 
-Business logic
+## components/
 
-pages/
+Reusable shared UI.
 
-Page composition only
+---
 
-context/
+## context/
 
-Global state
+Global shared state.
 
-styles/
+---
 
-Global styling
+## features/
 
-utils/
+Feature-specific logic.
 
-Shared utilities
+---
+
+## hooks/
+
+Shared reusable hooks.
+
+---
+
+## styles/
+
+Global styling and design tokens.
+
+---
+
+## utils/
+
+Framework-independent helper functions.
+
+---
+
+## types/
+
+Shared application-wide TypeScript types.
 
 ---
 
@@ -267,102 +336,126 @@ Shared utilities
 
 ```
 Drop Zone
-
-↓
-
-File Picker
-
-↓
-
-File Context
-
-↓
-
+      │
+      ▼
+Native File Picker
+      │
+      ▼
+Native Drag & Drop
+      │
+      ▼
+FileContext
+      │
+      ▼
 File List
-
-↓
-
-Password
-
-↓
-
-Encryption Buttons
+      │
+      ▼
+Password Card
+      │
+      ▼
+Action Buttons
+      │
+      ▼
+Status Bar
 ```
 
 ---
 
-# Planned Architecture
+# Planned Feature Map
 
 ```
 Drop Zone
-
-↓
-
-Validation
-
-↓
-
-Password
-
-↓
-
-Encrypt Command
-
-↓
-
-Rust
-
-↓
-
-AES-256
-
-↓
-
+      │
+      ▼
+Password Validation
+      │
+      ▼
+Encrypt Button
+      │
+      ▼
+Rust Command
+      │
+      ▼
+AES-256 Engine
+      │
+      ▼
 Progress Events
-
-↓
-
-Status Bar
+      │
+      ▼
+Encrypted Output
 ```
 
 ---
 
 # Design Principles
 
-- Feature-first architecture
-- Single responsibility
-- Separation of concerns
-- Thin pages
-- Reusable UI
-- Context for shared state
+- Feature-First Architecture
+- Single Responsibility Principle
+- Separation of Concerns
+- Thin Components
+- Presentational UI
+- Business Logic in Hooks
+- Shared State through Context API
 - Rust owns business logic
 - React owns presentation
+- Maintainability over cleverness
 
 ---
 
-# Future Modules
+# Planned Modules
 
-Encryption Engine
+Core
 
-Password Manager
+- Encryption Engine
+- Decryption Engine
 
-Settings
+Security
 
-Recent Files
+- Password Validation
+- Password Generator
+- Secure Delete
 
-Update Checker
+Application
 
-Secure Delete
+- Settings
+- Recent Files
+- Update Checker
 
-Folder Encryption
+Utilities
 
-Logging
+- Folder Encryption
+- Progress Tracking
+- Logging
+
+---
+
+# Architecture Status
+
+## Completed
+
+- ✅ Feature-First Architecture
+- ✅ Shared FileContext
+- ✅ Native File Picker
+- ✅ Native Drag & Drop
+- ✅ File Management Workflow
+
+## In Progress
+
+- 🔄 Password Validation
+
+## Planned
+
+- ⏳ Rust Commands
+- ⏳ AES-256 Encryption
+- ⏳ AES-256 Decryption
+- ⏳ Progress Events
+- ⏳ Settings
 
 ---
 
 Last Updated
 
-Sprint 4
+Sprint 5 Complete
 
 Version
 

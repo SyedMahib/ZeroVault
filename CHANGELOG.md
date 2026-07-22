@@ -1,47 +1,42 @@
 # Changelog
 
-All notable changes to this project will be documented here.
+All notable changes to ZeroVault will be documented in this file.
+
+The format is based on Keep a Changelog.
 
 ---
 
-# v0.2.0
+## [0.2.0] - In Development
 
-## Added
+### Added
 
+- Modern desktop UI built with React + Tailwind CSS
+- Feature-first project architecture
 - Native Tauri file picker
-- Multiple file selection
-- Additive file selection
-- Duplicate prevention
+- Native drag-and-drop support
+- Shared FileContext for centralized file management
+- Multi-file selection
+- Duplicate file prevention
 - Remove individual files
 - Clear all files
-- File list component
-- File context using React Context API
+- Responsive Drop Zone
+- File List component
+- Password section UI
+- Bottom status bar
+- Reusable UI layout
 
-## Improved
+### Changed
 
-- Home page layout
-- File management workflow
-- Card consistency
-- Desktop UI polish
+- Replaced HTML5 drag-and-drop with native Tauri drag-and-drop
+- Centralized file management into FileContext
+- Improved component separation
 
-## Fixed
+### Planned
 
-- Tauri dialog permissions
-- Dialog plugin configuration
-- Multiple file handling
-
----
-
-# v0.1.0
-
-## Added
-
-- Initial project setup
-- React + TypeScript
-- Tauri v2
-- Global design system
-- Header
-- Drop Zone
-- Password section
-- Action buttons
-- Status bar
+- Password validation
+- Password strength indicator
+- AES-256 encryption engine (Rust)
+- File encryption workflow
+- File decryption workflow
+- Progress indicator
+- Settings

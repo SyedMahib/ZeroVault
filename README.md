@@ -1,120 +1,211 @@
 # ZeroVault
 
-ZeroVault is a modern cross-platform desktop application for securely encrypting and decrypting files using strong AES-256 encryption.
+<div align="center">
 
-Built with:
+A modern, privacy-first desktop application for securely encrypting and decrypting files using strong **AES-256** encryption.
 
-- Tauri v2
-- React
-- TypeScript
-- Rust
+Built with **Tauri v2**, **React**, **TypeScript**, and **Rust**.
 
----
+> ⚠️ **Project Status:** Active Development
 
-## Features
-
-### Current
-
-- Native file picker
-- Multiple file selection
-- Add files from multiple selections
-- Duplicate file prevention
-- Remove individual files
-- Clear all selected files
-- Modern desktop UI
-- Password input
-- Encrypt & Decrypt action buttons
+</div>
 
 ---
 
-## Roadmap
+## ✨ Features
 
-### Sprint 5
+### ✅ Implemented
 
-- Drag & Drop support
-- Password validation
+- Native Tauri File Picker
+- Native Drag & Drop
+- Multiple File Selection
+- Additive File Selection
+- Duplicate File Prevention
+- Remove Individual Files
+- Clear All Files
+- Modern Desktop UI
+- Password Input
+- Encrypt & Decrypt Controls
+- Shared Global File State (React Context)
+
+---
+
+## 🚧 Currently In Development
+
+- Password Validation
+- Password Strength Meter
+- Password Visibility Toggle
+
+---
+
+## 📅 Roadmap
 
 ### Sprint 6
 
-- Rust command integration
+- Password Validation
+- Password Strength Meter
+- Password Visibility Toggle
 
 ### Sprint 7
 
-- AES-256 Encryption
+- Rust Integration
+- Tauri Commands
 
 ### Sprint 8
 
+- AES-256 Encryption
+
+### Sprint 9
+
 - AES-256 Decryption
 
-### Future
+### Sprint 10
 
-- Progress indicator
+- Progress Tracking
+
+### Sprint 11
+
 - Settings
-- Secure delete
-- Recent files
-- Dark/Light themes
+
+### Sprint 12
+
+- Secure Delete
 
 ---
 
-## Tech Stack
+## 🛠 Tech Stack
 
 ### Frontend
 
 - React
 - TypeScript
 - Vite
-- Lucide Icons
+- Lucide React
+
+### Desktop
+
+- Tauri v2
 
 ### Backend
 
 - Rust
-- Tauri
 
 ---
 
-## Project Structure
+## 📂 Project Structure
 
-```
+```text
 src/
 │
+├── app/
+├── assets/
 ├── components/
 ├── context/
 ├── features/
-├── layouts/
-├── pages/
+├── hooks/
 ├── styles/
+├── types/
 └── utils/
 
 src-tauri/
 │
 ├── capabilities/
 ├── src/
-└── Cargo.toml
+├── Cargo.toml
+└── tauri.conf.json
+
+docs/
+│
+├── PROJECT_BIBLE.md
+├── AI_CONTEXT.md
+├── ARCHITECTURE.md
+├── API.md
+├── DECISIONS.md
+├── PROJECT_STATUS.md
+├── ROADMAP.md
+└── SECURITY.md
 ```
 
 ---
 
-## Current Status
+## 🚀 Getting Started
 
-Current Version
+Clone the repository
 
-v0.2.0
+```bash
+git clone https://github.com/your-username/ZeroVault.git
+```
 
-Completed
+Install dependencies
 
-- Project architecture
-- Design System
-- Desktop UI
-- Native File Picker
-- File Management Workflow
+```bash
+npm install
+```
 
-Currently Working On
+Run the application
 
-- Drag & Drop
-- Password Validation
+```bash
+npm run tauri dev
+```
+
+Build for production
+
+```bash
+npm run tauri build
+```
 
 ---
 
-## License
+## 📊 Project Status
 
-MIT
+Current Version
+
+**v0.2.0**
+
+Current Sprint
+
+**Sprint 6**
+
+Completed
+
+- ✅ Project Foundation
+- ✅ Feature-First Architecture
+- ✅ Modern Desktop UI
+- ✅ Native File Picker
+- ✅ Native Drag & Drop
+- ✅ File Management System
+
+Current Focus
+
+- 🔄 Password Validation
+
+---
+
+## 📚 Documentation
+
+Detailed project documentation is available in the `docs/` directory.
+
+- Project Bible
+- AI Context
+- Architecture
+- API Documentation
+- Security Specification
+- Architecture Decision Records
+- Project Status
+- Development Roadmap
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome.
+
+Please read **CONTRIBUTING.md** before opening a Pull Request.
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License**.
+
+See the **LICENSE** file for details.

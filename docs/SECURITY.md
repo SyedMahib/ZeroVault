@@ -1,134 +1,379 @@
-# ZeroVault Security
+# ZeroVault Security Specification
 
-**Version:** 0.1
+> This document defines the security architecture of ZeroVault.
+>
+> All cryptographic implementations must follow this specification.
+>
+> Never change security decisions without updating this document and creating a new Architecture Decision Record (ADR).
 
 ---
 
-# Security Philosophy
+# Purpose
 
-Security is the primary objective of ZeroVault.
+ZeroVault is designed to provide secure, offline file encryption.
 
-Convenience, speed, and feature development must never compromise user data.
+Security is the highest priority.
 
-ZeroVault is designed around the principle that users should maintain complete control over their encrypted information.
+Performance, convenience, and UI should never compromise security.
 
 ---
 
 # Security Principles
 
-1. Offline First
-2. Zero Password Storage
-3. Zero Telemetry
-4. Modern Cryptography Only
-5. Open Source Security
-6. Least Privilege
-7. Secure by Default
+ZeroVault follows these principles:
+
+- Offline First
+- Privacy by Design
+- No Telemetry
+- No User Tracking
+- No Cloud Storage
+- No Password Storage
+- No Plaintext Recovery
+- Fail Secure
+- Secure Defaults
 
 ---
 
 # Threat Model
 
-ZeroVault protects data against:
+ZeroVault protects against:
 
-- Lost or stolen storage devices
-- Unauthorized file access
-- Malware that cannot access the user's password
-- Curious third parties
+✅ Unauthorized access to encrypted files
 
-ZeroVault is **not** designed to protect against:
+✅ Offline theft of encrypted files
 
-- An attacker with full control of the running operating system
-- Hardware keyloggers
-- Physical coercion
-- Compromised firmware
-- Nation-state attacks against an already compromised machine
+✅ Weak password attacks through strong key derivation
 
----
+✅ File tampering detection
 
-# Security Rules
+ZeroVault does NOT protect against:
 
-## Passwords
+❌ Malware already running on the computer
 
-Passwords are never stored.
+❌ Keyloggers
 
-Passwords are never logged.
+❌ Physical attacks while files are already decrypted
 
-Passwords are never transmitted.
-
-Passwords are only processed when required.
+❌ Compromised operating systems
 
 ---
 
-## Encryption Keys
+# Encryption Algorithm
 
-Encryption keys must never be written to disk.
+Status
 
-Keys exist only in memory for the shortest possible time.
+Planned
 
-Memory containing sensitive material should be cleared when practical.
+Algorithm
+
+AES-256-GCM
+
+Reason
+
+- Industry Standard
+- Authenticated Encryption
+- High Performance
+- Widely Audited
+
+Alternative considered
+
+- XChaCha20-Poly1305
+
+Current Decision
+
+AES-256-GCM
 
 ---
 
-## Files
+# Key Derivation
 
-Files never leave the local machine.
+Status
 
-No cloud synchronization.
+Planned
 
-No automatic uploads.
+Algorithm
 
-No hidden backups.
+Argon2id
+
+Reason
+
+Passwords must never be used directly as encryption keys.
+
+Argon2id provides resistance against:
+
+- GPU attacks
+- ASIC attacks
+- Rainbow tables
+
+Future Parameters
+
+Memory Cost
+
+64 MB
+
+Iterations
+
+3
+
+Parallelism
+
+4
+
+Key Length
+
+32 bytes
 
 ---
 
-## Cryptography
+# Random Number Generation
 
-ZeroVault will only use well-audited cryptographic algorithms.
+Every nonce, salt, and random value must use a cryptographically secure random number generator provided by Rust.
 
-Custom encryption algorithms are strictly prohibited.
+Never use pseudo-random generators.
 
-The specific algorithms will be documented after selection.
+---
+
+# Password Handling
+
+Passwords must never:
+
+- Be written to disk
+- Be logged
+- Be stored in configuration
+- Be cached
+- Be transmitted over the network
+
+Passwords should exist only in memory.
+
+---
+
+# Memory Safety
+
+Sensitive memory should be cleared whenever practical.
+
+Examples
+
+- Passwords
+- Derived keys
+- Temporary plaintext buffers
+
+Rust crates that support zeroization should be preferred.
+
+---
+
+# File Format
+
+Planned Structure
+
+```
++----------------------------+
+| ZeroVault Header           |
++----------------------------+
+| Version                    |
++----------------------------+
+| Salt                       |
++----------------------------+
+| Nonce                      |
++----------------------------+
+| Metadata                   |
++----------------------------+
+| Ciphertext                 |
++----------------------------+
+| Authentication Tag         |
++----------------------------+
+```
+
+---
+
+# File Extension
+
+Proposed
+
+```
+.zv
+```
+
+Example
+
+```
+photo.jpg
+
+↓
+
+photo.jpg.zv
+```
+
+---
+
+# Authentication
+
+AES-GCM provides built-in authentication.
+
+If a file has been modified:
+
+Decryption must fail.
+
+Never output corrupted plaintext.
+
+---
+
+# Secure Delete
+
+Status
+
+Planned
+
+Purpose
+
+Reduce the likelihood of recovering deleted plaintext files.
+
+Implementation may vary by operating system.
+
+Note
+
+True secure deletion cannot be guaranteed on SSDs due to wear leveling.
+
+Documentation should clearly communicate this limitation.
+
+---
+
+# Temporary Files
+
+ZeroVault should avoid creating temporary plaintext files whenever possible.
+
+If temporary files are unavoidable:
+
+- Create securely
+- Delete immediately
+- Never reuse filenames
+
+---
+
+# Logging Policy
+
+Allowed
+
+- Application events
+- Errors
+- Performance metrics
+
+Never log
+
+- Passwords
+- Keys
+- Plaintext
+- File contents
+- Sensitive metadata
+
+---
+
+# Error Messages
+
+Good
+
+```
+Incorrect password.
+```
+
+Bad
+
+```
+Authentication tag mismatch after AES-GCM verification.
+```
+
+Never expose internal cryptographic details.
+
+---
+
+# Frontend Security
+
+React must never:
+
+- Encrypt files
+- Decrypt files
+- Generate keys
+- Store passwords permanently
+
+React responsibilities:
+
+- UI
+- Validation
+- Progress Display
+
+---
+
+# Backend Security
+
+Rust owns:
+
+- Encryption
+- Decryption
+- Key Derivation
+- Random Number Generation
+- File IO
+- Authentication
+- Secure Delete
 
 ---
 
 # Dependencies
 
-Every dependency must satisfy at least one of the following:
+Only well-maintained cryptographic libraries may be used.
 
-- Improves security
-- Reduces complexity
-- Provides functionality that cannot reasonably be implemented internally
+Preferred crates
 
-Unused dependencies should be removed.
+- aes-gcm
+- argon2
+- rand
+- zeroize
 
----
-
-# Secure Development Practices
-
-- Review AI-generated code before merging.
-- Review third-party code before adoption.
-- Keep dependencies updated.
-- Avoid unnecessary complexity.
-- Write tests for security-critical components.
+Avoid obscure or unmaintained cryptographic crates.
 
 ---
 
-# Future Security Enhancements
+# Future Security Features
 
-Planned for future versions:
-
-- Memory zeroization
-- Secure file deletion
-- Integrity verification
-- Hardware security key support
-- Digital signature verification
-
----
-
-# Security Reviews
-
-Every major security-related feature should be reviewed before release.
+- Folder Encryption
+- Secure Password Generator
+- Clipboard Auto-Clear
+- Memory Locking (where supported)
+- Hardware-backed Key Storage (future)
+- Digital Signature Verification
 
 ---
 
-End of Security Document.
+# Security Review Checklist
+
+Before every release verify:
+
+- [ ] No passwords are logged
+- [ ] No encryption keys are stored
+- [ ] Secure random generation is used
+- [ ] Authentication failures stop decryption
+- [ ] Memory cleanup is implemented
+- [ ] Dependencies are up to date
+- [ ] Documentation matches implementation
+
+---
+
+# Security Philosophy
+
+ZeroVault prioritizes:
+
+1. Security
+2. Privacy
+3. Reliability
+4. Performance
+5. Convenience
+
+Whenever these conflict, security takes precedence.
+
+---
+
+# Last Updated
+
+Pre-Encryption Phase
+
+Version
+
+v0.1

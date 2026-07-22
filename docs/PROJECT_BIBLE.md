@@ -8,37 +8,50 @@
 
 # Project Overview
 
-Project Name
+## Project Name
 
 ZeroVault
 
-Purpose
+## Purpose
 
-A modern cross-platform desktop application for securely encrypting and decrypting files using AES-256 encryption.
+ZeroVault is a modern, privacy-first desktop application for securely encrypting and decrypting files using AES-256 encryption.
+
+The application is designed to work completely offline. No user data is uploaded to any server.
+
+---
+
+# Vision
+
+Create a fast, secure and beautiful desktop encryption application that feels native on Windows, macOS and Linux while maintaining professional software engineering practices.
 
 ---
 
 # Core Stack
 
-Frontend
+## Frontend
 
 - React
 - TypeScript
 - Vite
 
-Desktop Framework
+## Desktop Framework
 
 - Tauri v2
 
-Backend
+## Backend
 
 - Rust
 
-Icons
+## Styling
+
+- CSS
+- CSS Variables
+
+## Icons
 
 - Lucide React
 
-Version Control
+## Version Control
 
 - Git
 - GitHub
@@ -49,7 +62,12 @@ Version Control
 
 ## 1. Feature-first Architecture
 
-The application follows a feature-based folder structure.
+Every feature owns its own:
+
+- components
+- hooks
+- types
+- index.ts
 
 Example
 
@@ -61,37 +79,37 @@ features/
     encryption/
 ```
 
-No business logic should live inside pages.
+Business logic stays inside hooks.
+
+UI components remain presentational.
 
 ---
 
 ## 2. UI Components
 
-Reusable UI components belong inside
+Reusable UI belongs inside
 
 ```
 components/ui
 ```
 
-Feature-specific components belong inside each feature.
+Feature-specific components remain inside each feature.
 
 ---
 
 ## 3. Global State
 
-Global shared state uses
-
-React Context API
+Shared application state uses React Context API.
 
 Current Contexts
 
 - FileContext
 
-Future
+Future Contexts
 
 - SettingsContext
 
-Redux or Zustand will not be introduced unless the project complexity requires it.
+Redux or Zustand will not be introduced unless absolutely necessary.
 
 ---
 
@@ -103,9 +121,12 @@ Component CSS
 
 CSS Variables
 
-No inline styles.
+Rules
 
-No CSS frameworks after the initial setup.
+- No inline styles
+- No CSS frameworks after setup
+- Prefer semantic class names
+- Keep styling separated from logic
 
 ---
 
@@ -115,13 +136,13 @@ Always use aliases.
 
 Correct
 
-```
+```ts
 import { useFiles } from "@/context/FileContext";
 ```
 
 Avoid
 
-```
+```ts
 ../../../components
 ```
 
@@ -153,7 +174,7 @@ PascalCase
 FileContext.tsx
 ```
 
-CSS
+CSS Classes
 
 kebab-case
 
@@ -175,6 +196,7 @@ Completed
 - Password Card
 - Action Buttons
 - Status Bar
+- Responsive Layout
 
 ---
 
@@ -183,11 +205,62 @@ Completed
 Completed
 
 - Native Tauri File Picker
-- Multiple file selection
-- Additive file selection
-- Duplicate prevention
-- Remove file
-- Clear all files
+- Native Tauri Drag & Drop
+- Multiple File Selection
+- Additive File Selection
+- Duplicate Prevention
+- Remove Individual File
+- Clear All Files
+- Shared FileContext
+- Automatic UI Updates
+
+---
+
+# Current Application Flow
+
+## File Picker
+
+```
+User
+   │
+   ▼
+Native Tauri Dialog
+   │
+   ▼
+useFilePicker()
+   │
+   ▼
+addFiles()
+   │
+   ▼
+FileContext
+   │
+   ▼
+FileListCard
+```
+
+---
+
+## Drag & Drop
+
+```
+User
+   │
+   ▼
+Native Tauri Drag Event
+   │
+   ▼
+useDragDrop()
+   │
+   ▼
+addFiles()
+   │
+   ▼
+FileContext
+   │
+   ▼
+FileListCard
+```
 
 ---
 
@@ -205,9 +278,23 @@ Use
 
 Reason
 
-Native OS experience.
+- Native OS experience
+- Cross-platform
+- Real filesystem paths
 
-Cross-platform.
+---
+
+## Native Drag & Drop
+
+Decision
+
+Use native Tauri drag events.
+
+Do not use HTML5 Drag & Drop.
+
+Reason
+
+Encryption requires actual filesystem paths.
 
 ---
 
@@ -215,11 +302,11 @@ Cross-platform.
 
 Decision
 
-React Context API.
+React Context API
 
 Reason
 
-Current application size does not justify Redux or Zustand.
+Current application complexity does not justify Redux or Zustand.
 
 ---
 
@@ -227,9 +314,9 @@ Current application size does not justify Redux or Zustand.
 
 Decision
 
-Selecting files multiple times appends new files instead of replacing previous selections.
+Selecting files multiple times appends new files.
 
-Duplicate files are ignored.
+Duplicate files are ignored using absolute file paths.
 
 Reason
 
@@ -241,43 +328,54 @@ Matches professional desktop applications.
 
 Current
 
-Single password input.
+UI placeholder only.
 
-Future
+Planned
 
-- Show / Hide password
-- Strength indicator
-- Password generator
+- Password validation
+- Show / Hide Password
+- Password Strength Meter
+- Password Generator
 
 ---
 
 ## Encryption
 
-Planned
+Status
 
-AES-256
+Not yet implemented.
 
-Implemented in Rust.
+Future
 
-Frontend never performs encryption.
+AES-256 encryption implemented entirely in Rust.
+
+React never performs encryption.
 
 ---
 
-## Rust Responsibilities
+# Responsibilities
 
-Rust owns
+## React
+
+Responsible for
+
+- UI
+- State Management
+- User Interaction
+- Validation
+- Progress Display
+
+---
+
+## Rust
+
+Responsible for
 
 - Encryption
 - Decryption
 - File IO
-- Secure delete
-- Progress reporting
-
-React owns
-
-- UI
-- State
-- User interaction
+- Secure Delete
+- Progress Reporting
 
 ---
 
@@ -285,28 +383,42 @@ React owns
 
 ```
 src/
-
-components/
-context/
-features/
-layouts/
-pages/
-styles/
-utils/
+│
+├── app/
+├── assets/
+├── components/
+├── context/
+│   └── FileContext.tsx
+├── features/
+│   ├── dropzone/
+│   ├── file-list/
+│   ├── password/
+│   └── status-bar/
+├── hooks/
+├── styles/
+├── types/
+└── utils/
 
 src-tauri/
-
-capabilities/
-src/
+│
+├── capabilities/
+├── src/
+└── tauri.conf.json
 ```
 
 ---
 
 # Git Workflow
 
-Commit after every completed sprint.
+Every completed sprint must end with
 
-Commit style
+- Documentation update
+- Git commit
+- Changelog update
+- Project Bible update
+- AI Context update
+
+Commit format
 
 ```
 feat:
@@ -322,11 +434,15 @@ chore:
 
 # Completed Milestones
 
-✅ Foundation
+✅ Project Foundation
 
-✅ UI System
+✅ Design System
+
+✅ Main UI
 
 ✅ Native File Picker
+
+✅ Native Drag & Drop
 
 ✅ File Management
 
@@ -334,11 +450,11 @@ chore:
 
 # Current Sprint
 
-Sprint 5
+## Sprint 6
 
 Goal
 
-Implement drag & drop support.
+Implement password validation system.
 
 ---
 
@@ -346,60 +462,79 @@ Implement drag & drop support.
 
 Sprint 6
 
-Password validation.
+- Password Validation
+- Password Strength Meter
 
 Sprint 7
 
-Rust commands.
+- Rust Commands
+- Backend Communication
 
 Sprint 8
 
-AES-256 encryption.
+- AES-256 Encryption
 
 Sprint 9
 
-AES-256 decryption.
+- AES-256 Decryption
 
 Sprint 10
 
-Progress tracking.
+- Progress Tracking
 
 Sprint 11
 
-Settings.
+- Settings
 
 Sprint 12
 
-Release Candidate.
+- Release Candidate
 
 ---
 
-# Rules
+# Development Rules
 
-1. No business logic inside pages.
+1. No business logic inside UI components.
 
 2. No relative imports.
 
-3. Every feature has its own folder.
+3. Every feature owns its own components and hooks.
 
-4. Every sprint ends with
+4. Keep components presentational.
 
-- Documentation update
-- Git commit
-- Project Bible update
+5. Put reusable logic inside hooks.
 
-5. Every architectural decision must be documented before implementation.
+6. Rust handles encryption.
 
-6. Prefer maintainability over cleverness.
+7. React handles UI.
 
-7. UI changes should not break business logic.
+8. Every sprint ends with:
+   - Documentation update
+   - Git commit
+   - Changelog update
+   - Project Bible update
+   - AI Context update
+
+9. Every architectural decision must be documented before implementation.
+
+10. Prefer maintainability over cleverness.
+
+11. UI changes must never break business logic.
+
+12. New AI assistants should read this document before making project changes.
 
 ---
 
-Last Updated
-
-Sprint 4
+# Current Version
 
 Version
 
 v0.2.0
+
+Status
+
+Active Development
+
+Last Updated
+
+Sprint 5 Complete

@@ -1,265 +1,500 @@
 # ZeroVault AI Context
 
-> This document provides context for AI assistants working on ZeroVault.
+> This document is the primary onboarding guide for AI assistants working on ZeroVault.
 >
-> Read this file before making architectural or implementation changes.
+> Always read this file and `PROJECT_BIBLE.md` before making architectural or implementation changes.
+>
+> The goal is to maintain consistency, scalability, and long-term maintainability.
 
 ---
 
 # Project
 
-Name
+## Name
 
 ZeroVault
 
-Description
+## Description
 
-ZeroVault is a cross-platform desktop application built with Tauri v2, React, TypeScript, and Rust for secure AES-256 file encryption and decryption.
+ZeroVault is a modern, privacy-first desktop application built with **Tauri v2**, **React**, **TypeScript**, and **Rust** for securely encrypting and decrypting files using **AES-256 encryption**.
+
+The application is completely offline.
+
+No cloud.
+
+No telemetry.
+
+No user accounts.
+
+The React frontend is responsible for the UI and user interaction, while Rust performs all cryptographic and filesystem operations.
 
 ---
 
-# Current Progress
+# Current Status
 
-Version
+## Version
 
 v0.2.0
 
-Progress
+## Development Progress
 
-Approximately 35%
+Approximately **40% Complete**
 
-Current Sprint
+## Current Sprint
 
-Sprint 5
+**Sprint 6 — Password Validation**
 
 ---
 
-# Tech Stack
+# Completed Features
 
-Frontend
+## UI
+
+- Header
+- Drop Zone
+- File List
+- Password Card (UI)
+- Action Buttons
+- Status Bar
+- Responsive Layout
+
+---
+
+## File Management
+
+Completed
+
+- Native Tauri File Picker
+- Native Tauri Drag & Drop
+- Multiple File Selection
+- Additive File Selection
+- Duplicate Prevention
+- Remove Individual Files
+- Clear All Files
+- Shared FileContext
+- Automatic UI Updates
+
+---
+
+# Technology Stack
+
+## Frontend
 
 - React
 - TypeScript
 - Vite
 
-Desktop
+## Desktop
 
 - Tauri v2
 
-Backend
+## Backend
 
 - Rust
 
-Icons
+## Styling
+
+- CSS
+- CSS Variables
+
+## Icons
 
 - Lucide React
 
-State
+## State Management
 
 - React Context API
 
 ---
 
-# Architecture
+# Current Architecture
 
-Feature-first architecture.
+The project follows a **Feature-First Architecture**.
+
+Every feature owns:
+
+- components
+- hooks
+- types
+- index.ts
 
 Example
 
+```
 src/
 
 features/
-dropzone/
-file-list/
-password/
-encryption/
 
-Business logic belongs inside features.
+    dropzone/
+        components/
+        hooks/
+        types.ts
+        index.ts
 
-Pages should remain thin.
+    file-list/
+        components/
+        hooks/
+        types.ts
+        index.ts
+
+    password/
+        components/
+        hooks/
+        types.ts
+        index.ts
+```
+
+Business logic belongs inside hooks.
+
+UI components remain presentational.
 
 ---
 
-# Styling
+# Folder Responsibilities
 
-Global CSS
+## components/
 
-CSS Variables
+Reusable shared UI.
 
-Component CSS
+## context/
 
-No inline styles.
+Global application state.
 
-No CSS-in-JS.
+Current
+
+- FileContext
+
+Future
+
+- SettingsContext
+
+---
+
+## features/
+
+Every feature owns its own logic.
+
+Do not place feature logic elsewhere.
+
+---
+
+## utils/
+
+Reusable helper functions.
+
+No React code.
+
+---
+
+## styles/
+
+Global styling and design tokens.
+
+---
+
+# Current File Flow
+
+## Native File Picker
+
+```
+User
+   │
+   ▼
+Native Tauri Dialog
+   │
+   ▼
+useFilePicker()
+   │
+   ▼
+addFiles()
+   │
+   ▼
+FileContext
+   │
+   ▼
+FileListCard
+```
+
+---
+
+## Native Drag & Drop
+
+```
+User
+   │
+   ▼
+Native Tauri Drag Event
+   │
+   ▼
+useDragDrop()
+   │
+   ▼
+addFiles()
+   │
+   ▼
+FileContext
+   │
+   ▼
+FileListCard
+```
+
+---
+
+# Current State Management
+
+Global state uses **React Context API**.
+
+Current Context
+
+- FileContext
+
+FileContext currently manages:
+
+- files
+- openFilePicker()
+- addFiles()
+- removeFile()
+- clearFiles()
+
+Do not introduce Redux or Zustand without explicit approval.
+
+---
+
+# Styling Rules
+
+Use
+
+- Global CSS
+- CSS Variables
+- Component CSS
+
+Do NOT use
+
+- Inline styles
+- CSS-in-JS
+- Tailwind utility classes mixed with component-specific CSS (unless intentionally adopted later)
 
 ---
 
 # Import Rules
 
-Always use
-
-```
-@/
-```
-
-Never use long relative imports.
+Always use aliases.
 
 Correct
 
-```
-@/context/FileContext
+```ts
+import { useFiles } from "@/context/FileContext";
 ```
 
-Incorrect
+Avoid
 
-```
+```ts
 ../../../context/FileContext
 ```
 
 ---
 
-# Current Features
+# Naming Convention
 
-Completed
+## Components
 
-- Native file picker
-- Multi-file selection
-- Duplicate prevention
-- Remove file
-- Clear all files
-- Desktop UI
+PascalCase
 
-Not Started
+```
+DropZoneCard.tsx
+```
 
-- Drag & Drop
-- Password validation
-- Encryption
-- Decryption
+## Hooks
 
----
+camelCase beginning with use
 
-# File Management Rules
+```
+useFilePicker.ts
+```
 
-Multiple selections append.
+## Context
 
-Duplicate files are ignored.
+PascalCase
 
-Removing files updates state immediately.
+```
+FileContext.tsx
+```
 
-Clear All removes every selected file.
+## CSS
 
----
+kebab-case
 
-# State Management
-
-Current
-
-React Context API
-
-Context
-
-FileContext
-
-Avoid introducing Redux or Zustand unless approved.
+```
+dropzone-card
+```
 
 ---
 
-# Rust Responsibilities
+# Current Technical Decisions
 
-Rust owns
+- Native dialogs use **@tauri-apps/plugin-dialog**
+- Native drag-and-drop uses **Tauri Webview drag events**
+- Multiple file selections append to the existing list
+- Duplicate files are prevented using absolute file paths
+- React Context API manages global state
+- Encryption will be implemented entirely in Rust
+- React must never perform cryptographic operations
+
+---
+
+# Responsibilities
+
+## React
+
+Responsible for
+
+- UI
+- State Management
+- User Interaction
+- Validation
+- Progress Display
+
+---
+
+## Rust
+
+Responsible for
 
 - Encryption
 - Decryption
 - File IO
-- Secure delete
-
-React owns
-
-- UI
-- State
-- User interaction
+- Secure Delete
+- Progress Reporting
 
 ---
 
 # Code Style
 
-Functional React Components only.
-
-Strict TypeScript.
-
-No unused code.
-
-Prefer composition.
-
-Prefer reusable components.
-
----
-
-# Naming
-
-Components
-
-PascalCase
-
-Hooks
-
-useSomething
-
-Contexts
-
-SomethingContext
-
-CSS
-
-kebab-case
-
----
-
-# Important Decisions
-
-- Native dialogs use @tauri-apps/plugin-dialog.
-- File picker supports multiple selections.
-- New selections append to the existing list.
-- Duplicate files are prevented.
-- React Context API is the global state solution.
-- Encryption will be implemented entirely in Rust.
-- React never performs cryptographic operations.
-
----
-
-# Documentation Policy
-
-Every completed sprint updates:
-
-- README.md
-- CHANGELOG.md
-- PROJECT_STATUS.md
-- PROJECT_BIBLE.md
-- AI_CONTEXT.md
+- Functional React Components only
+- Strict TypeScript
+- Prefer composition over inheritance
+- Keep components small
+- Business logic belongs inside hooks
+- Prefer reusable code
+- Remove unused code
+- Keep files focused on a single responsibility
 
 ---
 
 # AI Guidelines
 
-Before implementing a feature:
+If you are an AI working on ZeroVault:
 
-1. Check PROJECT_BIBLE.md.
-2. Preserve the existing architecture.
-3. Do not move files unless necessary.
-4. Do not introduce new libraries without approval.
-5. Follow the existing folder structure.
-6. Keep components focused and reusable.
-7. Favor maintainability over clever solutions.
+## DO
+
+- Read `PROJECT_BIBLE.md` before making architectural changes
+- Preserve Feature-First Architecture
+- Keep components presentational
+- Keep business logic inside hooks
+- Use FileContext for global file management
+- Use existing path aliases (`@/`)
+- Follow existing naming conventions
+- Prefer extending existing code over rewriting it
+- Keep documentation synchronized with code changes
 
 ---
 
-# Current Goal
+## DON'T
 
-Implement drag & drop support while preserving the existing file management workflow.
+- Do not restructure folders without approval
+- Do not replace Context API with Redux/Zustand
+- Do not introduce unnecessary dependencies
+- Do not move encryption logic into React
+- Do not use relative imports
+- Do not duplicate existing logic
+- Do not break the current UI architecture
 
-After that:
+---
 
-- Password validation
-- Rust commands
-- AES-256 encryption
-- AES-256 decryption
+# Documentation Policy
+
+Every completed sprint must update:
+
+- README.md
+- CHANGELOG.md
+- PROJECT_BIBLE.md
+- AI_CONTEXT.md
+- ARCHITECTURE.md (if architecture changes)
+- DECISIONS.md (if new architectural decisions are made)
+
+---
+
+# Current Roadmap
+
+## Completed
+
+- ✅ Project Setup
+- ✅ Design System
+- ✅ Main UI
+- ✅ Native File Picker
+- ✅ Native Drag & Drop
+- ✅ File Management
+
+---
+
+## In Progress
+
+Sprint 6
+
+- Password Validation
+- Password Strength Meter
+
+---
+
+## Planned
+
+Sprint 7
+
+- Rust Commands
+- Frontend ↔ Rust Communication
+
+Sprint 8
+
+- AES-256 Encryption
+
+Sprint 9
+
+- AES-256 Decryption
+
+Sprint 10
+
+- Progress Tracking
+
+Sprint 11
+
+- Settings
+
+Sprint 12
+
+- Release Candidate
+
+---
+
+# Current Objective
+
+The next milestone is implementing a secure password workflow before integrating the Rust encryption engine.
+
+Priority order:
+
+1. Password Validation
+2. Password Strength Meter
+3. Rust Commands
+4. AES-256 Encryption
+5. AES-256 Decryption
+6. Progress Tracking
+7. Settings
+
+---
+
+Last Updated
+
+Sprint 5 Complete
+
+Version
+
+v0.2.0
